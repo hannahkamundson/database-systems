@@ -28,7 +28,7 @@ public enum IndexType {
      */
     public static boolean createIndexBeforeInsert(IndexType indexType) {
         return switch (indexType) {
-            case INDEX_A_AFTER, INDEX_B_AFTER, INDEX_A_B_BEFORE -> false;
+            case INDEX_A_AFTER, INDEX_B_AFTER, INDEX_A_B_AFTER -> false;
             default -> true;
         };
     }

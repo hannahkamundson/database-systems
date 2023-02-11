@@ -113,6 +113,77 @@ public class DBConnection implements AutoCloseable {
         log.info("Completed inserts.");
     }
 
+    public void queryA(int columnNumber) {
+        log.info("Running query 1");
+
+        // Sorry this is sloppy with the try catch
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM benchmark WHERE benchmark.columnA = ?");
+            st.setInt(1, columnNumber);
+            ResultSet results = st.executeQuery();
+            log.info("Result for query 1:\n{}", DBConnection.interpretResultSet(results));
+            st.close();
+            results.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("Completed query 1");
+    }
+
+    public void queryB(int columnNumber) {
+        log.info("Running query 2");
+
+        // Sorry this is sloppy with the try catch
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM benchmark WHERE benchmark.columnB = ?");
+
+            st.setInt(1, columnNumber);
+            ResultSet results = st.executeQuery();
+            log.info("Result for query 2:\n{}", DBConnection.interpretResultSet(results));
+            st.close();
+            results.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("Completed query 2");
+    }
+
+    public void queryAB(int columnNumber) {
+        log.info("Running query 3");
+        // Sorry this is sloppy with the try catch
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM benchmark WHERE benchmark.columnA = ? AND benchmark.columnB = ?");
+            st.setInt(1, columnNumber);
+            st.setInt(2, columnNumber);
+            ResultSet results = st.executeQuery();
+            log.info("Result for query 3:\n{}", DBConnection.interpretResultSet(results));
+            st.close();
+            results.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("Completed query 3");
+    }
+
+    private static String interpretResultSet(ResultSet result) throws SQLException {
+        StringBuilder builder = new StringBuilder();
+        while (result.next()) {
+            int theKey = result.getInt("theKey");
+            int columnA = result.getInt("columnA");
+            int columnB = result.getInt("columnB");
+            String filler = result.getString("filler");
+
+            builder.append("%s, %s, %s, %s\n".formatted(theKey, columnA, columnB, filler));
+        }
+
+        String resultString = builder.toString();
+
+        return resultString.isEmpty() ? "None" : resultString;
+    }
+
     @Override
     public void close() throws SQLException {
         conn.close();
